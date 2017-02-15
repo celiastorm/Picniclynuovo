@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/preferiti"
+            android:checked="false"
+            android:title="Preferiti"/>
+
+        <item
+            android:id="@+id/visitati"
+            android:checked="false"
+            android:title="Visitati" />
+
+        <item
+            android:id="@+id/help"
+            android:checked="false"
+            android:title="Help" />
+        <item
+            android:id="@+id/log_out"
+            android:checked="false"
+            android:title="Log Out" />
+        <item
+            android:id="@+id/info"
+            android:checked="false"
+            android:title="Informazioni" />
+    </group>
+</menu>

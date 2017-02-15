@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".HomeActivity">
+
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        <FrameLayout
+            android:id="@+id/srcbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="-8dp"
+            android:layout_marginBottom="15dp">
+
+
+            <!-- **** Place Your Content Here **** -->
+                <EditText
+                    android:id="@+id/editText"
+                    android:layout_weight="4"
+                    android:hint="@string/search_location_here"
+                    android:textColorHint="@color/colorPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_margin="15dp"
+                    android:textColor="@color/colorPrimary"
+                    android:ems="10"
+                    android:gravity="start"
+                    android:background="@drawable/login_edittext"
+                    />
+                <Button
+                    android:id="@+id/search_button"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:onClick="onMapSearch"
+                    android:layout_gravity="center|right"
+                    android:layout_margin="19dp"
+                    android:background="@drawable/search_icon"
+                    android:layout_weight="0.07" />
+
+
+
+
+            <!-- **** This is your view that appears below toolbar **** -->
+
+
+        </FrameLayout>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_main" />
+
+
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "924012133454",
+    "firebase_url": "https://picnic-ly.firebaseio.com",
+    "project_id": "picnic-ly",
+    "storage_bucket": "picnic-ly.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924012133454:android:15cd8d058983e7a9",
+        "android_client_info": {
+          "package_name": "com.picnicly.picnic_ly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924012133454-2edic94v61g4v7j6dood37pc8invfbvr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.picnicly.picnic_ly",
+            "certificate_hash": "B8AE7DC02A5412F7FC2C588A34ECCA3426B1B013"
+          }
+        },
+        {
+          "client_id": "924012133454-a0umlhfkr9di57s0p456inen7n154kp5.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "924012133454-3h6us97g40u2lbr2rvnipqith0jhbvp6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJmuExQqWzz65WvfRWzT9jy5UM97YGidU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924012133454-a0umlhfkr9di57s0p456inen7n154kp5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
