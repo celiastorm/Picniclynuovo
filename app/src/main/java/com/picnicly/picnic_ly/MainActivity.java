@@ -3,9 +3,13 @@ package com.picnicly.picnic_ly;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +40,9 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -68,14 +75,34 @@ public class MainActivity extends BaseActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
+        /*PackageInfo info;
+        try {
+            info = getPackageManager().getPackageInfo("com.picnicly.picnic_ly", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md;
+                md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String something = new String(Base64.encode(md.digest(), 0));
+                //String something = new String(Base64.encodeBytes(md.digest()));
+                Log.e("hash key", something);
+            }
+        } catch (PackageManager.NameNotFoundException e1) {
+            Log.e("name not found", e1.toString());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("no such an algorithm", e.toString());
+        } catch (Exception e) {
+            Log.e("exception", e.toString());
+        }*/
         SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
 
         if (pref.getBoolean("activity_executed", false) && isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            intent.putExtra("activity","main");
             startActivity(intent);
             finish();
         } else if (pref.getBoolean("activity_executed", false) && !isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, HomeActivityOff.class);
+            intent.putExtra("activity","main");
             startActivity(intent);
             finish();
         } else {
@@ -105,6 +132,7 @@ public class MainActivity extends BaseActivity implements
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, HomeActivityOff.class);
+                intent.putExtra("activity","main");
                 startActivity(intent);
                 finish();
             }
@@ -237,6 +265,7 @@ public class MainActivity extends BaseActivity implements
                         hideProgressDialog();
 
                         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                        intent.putExtra("activity","main");
                         startActivity(intent);
                         finish();
                         // [END_EXCLUDE]
@@ -315,6 +344,7 @@ public class MainActivity extends BaseActivity implements
                                     Toast.LENGTH_SHORT).show();
                         }
                         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                        intent.putExtra("activity","main");
                         startActivity(intent);
                         finish();
                     }

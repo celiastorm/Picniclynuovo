@@ -34,6 +34,7 @@ public class MyAdapterPreferiti extends RecyclerView.Adapter<MyAdapterPreferiti.
         holder.icon.setImageResource(item.getImageResId());
         holder.title2.setText(item.getTitle2());
         holder.icon2.setImageResource(item.getImageResId2());
+
     }
 
     @Override
@@ -41,12 +42,13 @@ public class MyAdapterPreferiti extends RecyclerView.Adapter<MyAdapterPreferiti.
         return listData.size();
     }
 
-    class DerpHolder extends RecyclerView.ViewHolder {
+    class DerpHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private TextView title;
         private ImageButton icon;
         private TextView title2;
         private ImageButton icon2;
+        View container;
 
         public DerpHolder(View itemView){
             super(itemView);
@@ -55,7 +57,18 @@ public class MyAdapterPreferiti extends RecyclerView.Adapter<MyAdapterPreferiti.
             icon = (ImageButton)itemView.findViewById(R.id.im_item_icon);
             title2 = (TextView)itemView.findViewById(R.id.Ibl_item_text2);
             icon2 = (ImageButton)itemView.findViewById(R.id.im_item_icon2);
+            container = (View)itemView.findViewById(R.id.cont_item_root);
+            container.setOnClickListener(this);
 
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.cont_item_root){
+
+            }else{
+
+            }
         }
     }
 }

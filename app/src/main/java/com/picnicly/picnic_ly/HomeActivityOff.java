@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -34,6 +36,7 @@ import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,6 +85,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -117,7 +121,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
     Marker prevmark;
     private GoogleApiClient client;
     private SupportMapFragment map;
-    public static final String TAG = "HomeActivity";
+    public static final String TAG = "HomeActivityOff";
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
@@ -131,6 +135,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
     String placeName, address;
     private static final float ALPHA_DIM_VALUE = 0.1f;
     private SlidingUpPanelLayout mLayout;
+    List<Marker> markers = new ArrayList<Marker>();
 
 
 
@@ -141,6 +146,14 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         //overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setContentView(R.layout.activity_home_off);
+        map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        /*map.getMapAsync(this);*/
+        initializeMap();
+
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -164,25 +177,9 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
         navigationView.setNavigationItemSelectedListener(this);
 
         android.app.FragmentManager fm = getFragmentManager();
-        //fm.beginTransaction().replace(R.id.content_frame, new MainFragment()).commit();
-        /*LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        DrawerLayout drawer = (DrawerLayout) inflater.inflate(R.layout.decor, null); // "null" is important.
-
-        // HACK: "steal" the first child of decor view
-        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
-        View child = decor.getChildAt(0);
-        decor.removeView(child);
-        FrameLayout container = (FrameLayout) drawer.findViewById(R.id.container); // This is the container we defined just now.
-        container.addView(child);
 
 
-        // Make the drawer replace the first child
-        decor.addView(drawer);*/
 
-
-        map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        /*map.getMapAsync(this);*/
-        initializeMap();
 
         ListView lv = (ListView) findViewById(R.id.list);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -225,20 +222,49 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
-                your_array_list );
+                your_array_list ){
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view =super.getView(position, convertView, parent);
+
+                TextView textView=(TextView) view.findViewById(android.R.id.text1);
+
+            /*YOUR CHOICE OF COLOR*/
+                textView.setTextColor(Color.WHITE);
+
+                return view;
+            }
+        };
 
         lv.setAdapter(arrayAdapter);
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout.setPanelHeight(0);
         mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 Log.i(TAG, "onPanelSlide, offset " + slideOffset);
+                if(slideOffset==0.0){
+                    FrameLayout img = (FrameLayout) findViewById(R.id.frm);
+                    //mLayout.findViewById(R.id.imageView).setVisibility(View.VISIBLE);
+                    img.setVisibility(View.GONE);
+                    mLayout.setPanelHeight(150);
+                }
+                else {
+                    FrameLayout img = (FrameLayout) findViewById(R.id.frm);
+                    //mLayout.findViewById(R.id.imageView).setVisibility(View.VISIBLE);
+                    img.setVisibility(View.VISIBLE);
+                    mLayout.setPanelHeight(150);
+                }
             }
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                 Log.i(TAG, "onPanelStateChanged " + newState);
+                if(mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED){
+                    mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                }
             }
         });
         mLayout.setFadeOnClickListener(new View.OnClickListener() {
@@ -248,19 +274,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-        TextView t = (TextView) findViewById(R.id.name);
-        t.setText(Html.fromHtml(getString(R.string.hello)));
-        Button f = (Button) findViewById(R.id.follow);
-        f.setText(Html.fromHtml(getString(R.string.follow)));
-        f.setMovementMethod(LinkMovementMethod.getInstance());
-        f.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse("http://www.twitter.com/umanoapp"));
-                startActivity(i);
-            }
-        });
+
 
         final EditText editText = (EditText) findViewById(R.id.editText);
         editText.setInputType(InputType.TYPE_NULL);
@@ -272,6 +286,20 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
                 editText.setInputType(InputType.TYPE_CLASS_TEXT);
+            }
+        });
+
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    //Toast.makeText(HelloFormStuff.this, editText.getText(), Toast.LENGTH_SHORT).show();
+                    onMapSearch(editText);
+                    return true;
+                }
+                return false;
             }
         });
         DrawerLayout touchInterceptor = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -298,6 +326,12 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
                 editText.clearFocus();
                 InputMethodManager imm = (InputMethodManager) drawerView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
+                mLayout.setPanelHeight(0);
+            }
+            @Override
+            public void onDrawerClosed(View drawerView){
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+
             }
         });
 
@@ -322,6 +356,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap map) {
         m = map;
+        map.getUiSettings().setRotateGesturesEnabled(false);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new
                 LatLng(49.39, -124.83), 20));
@@ -333,6 +368,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
                     MY_PERMISSION_ACCESS_COARSE_LOCATION);
         }
         map.setMyLocationEnabled(true);
+        map.setOnMarkerClickListener(this);
 
         /*map.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(47.17, 27.5699), 16));
@@ -343,7 +379,7 @@ Anchors the marker on the bottom left
             @Override
             public void onMapClick(LatLng latLng) {
                 final EditText editText = (EditText) findViewById(R.id.editText);
-                Toast.makeText(getApplicationContext(), latLng.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), latLng.toString(), Toast.LENGTH_LONG).show();
                 editText.clearFocus();
                 hideSoftKeyboard(HomeActivityOff.this);
             }
@@ -358,15 +394,19 @@ Anchors the marker on the bottom left
         LatLng tv = new LatLng(45.6662855, 12.2420720);
         LatLng quinto = new LatLng(45.6562880, 12.166667);
         m.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
-        m.addMarker(new MarkerOptions().position(tv).title("Tv, tv"));
+        //m.addMarker(new MarkerOptions().position(tv).title("Tv, tv"));
         //m.addMarker(new MarkerOptions().position(quinto).title("Tv, tvv"));
         //MarkerOptions marker = new MarkerOptions().position(quinto).title("Hello Maps");
+        markers.add(m.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal")));
+        //m.addMarker(new MarkerOptions().position(tv).title("Tv, tv"));
+        markers.add(m.addMarker(new MarkerOptions().position(tv).title("Tv, tv")));
 
 // Changing marker icon
         //marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table));
-        m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto"));
-        m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv"));
-
+        //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto"));
+        //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv"));
+        markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv")));
+        markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto")));
 // adding marker
         //m.addMarker(marker);
     }
@@ -383,13 +423,46 @@ Anchors the marker on the bottom left
     @Override
     public boolean onMarkerClick(final Marker mark) {
 
-        if (mark.equals(marker))
+        //if (mark.equals(marker))
+        if(markers.contains(mark))
         {
-            String address = getCompleteAddressString(marker.getPosition().latitude, marker.getPosition().longitude);
-            mLayout.findViewById(R.id.panel).setVisibility(View.VISIBLE);
-            //mLayout.findViewById(R.id.dragView).setVisibility(View.VISIBLE);
+            if(mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN){
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+            mLayout.findViewById(R.id.dragView).setVisibility(View.VISIBLE);
+            mLayout.setPanelHeight(150);
+            final String address = mark.getTitle()+"\n"+getCompleteAddressString(mark.getPosition().latitude, mark.getPosition().longitude);
+            //mLayout.findViewById(R.id.panel).setVisibility(View.VISIBLE);
             TextView t = (TextView) findViewById(R.id.name);
             t.setText(address);
+
+            Button f = (Button) findViewById(R.id.condividi);
+            //f.setMovementMethod(LinkMovementMethod.getInstance());
+            f.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, address);
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+                }
+            });
+
+            Button d = (Button) findViewById(R.id.direct);
+            //d.setMovementMethod(LinkMovementMethod.getInstance());
+            d.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Double lon = mark.getPosition().longitude;
+                    Double lat = mark.getPosition().latitude;
+                    String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%f, %f", lat, lon);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(intent);
+                }
+            });
+
             return true;
         }
         else{
@@ -490,7 +563,6 @@ Anchors the marker on the bottom left
     }
 
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -574,17 +646,20 @@ Anchors the marker on the bottom left
         int id = item.getItemId();
 
 
-        if (id == R.id.nav_home) {
+        /*if (id == R.id.nav_home) {
             map.getView().setVisibility(View.VISIBLE);
             sbutton.setVisibility(View.VISIBLE);
             edtext.setVisibility(View.VISIBLE);
 
-        }
-        else if (id == R.id.nav_help) {
-            sbutton.setVisibility(View.GONE);
+        }*/
+        if (id == R.id.nav_help) {
+            /*sbutton.setVisibility(View.GONE);
             map.getView().setVisibility(View.GONE);
             edtext.setVisibility(View.GONE);
-            fm.beginTransaction().replace(R.id.content_frame, new HelpFragment()).commit();
+            fm.beginTransaction().replace(R.id.content_frame, new HelpFragment()).commit();*/
+            Intent openHelp = new Intent(HomeActivityOff.this,HelpActivity.class);
+            openHelp.putExtra("activity","homeoff");
+            startActivity(openHelp);
 
         }
         else if (id == R.id.footer_spacer_1) {

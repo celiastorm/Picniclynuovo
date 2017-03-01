@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".FaqActivity">
+
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_faq"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".FaqActivity">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:id="@+id/scroll"
+        android:layout_alignParentStart="true" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\nAbbiamo raccolto alcune domande campione e inserite all'interno di questa sezione. Qualora non troviate soluzione al vostro quesito, contattateci.
+                "
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="10sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\nD: Come faccio a cercare un punto di interesse? \nR: I punti di interesse vengono segnalati da figure distinte, in relazione alla tipologia dello stesso. Vi è un apposito tasto di ricerca in cui poter effettuare le proprie ricerche.
+                "
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="10sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\nD: È possibile salvare un punto di interesse dopo averlo visitato? Come? \nR: Questo risulta possibile tramite la pagina dedicata al punto di interesse in questione. In particolare, qui è possibile segnare il luogo come 'Visitato', aggiungerlo tra i 'Preferiti' e condividere le informazioni del luogo sui social. ( .. parte mancante .. )
+"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="10sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\nD: Posso consultare la lista dei luoghi visitati/preferiti in qualsiasi momento? \nR: Certo. Nel menù laterale sarà sempre a disposizione una lista dei luoghi che hai segnato come visitati e/o salvato tra i preferiti. Sarà possibile anche visualizzare la votazione che hai lasciato al luogo di interesse."
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="10sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\nD: Ho segnato per errore il luogo come visitato/preferito. Come posso rimuoverlo? \nR: Hai due possibilità: o effettui la ricerca del punto di interesse tramite la barra nella schermata principale e lo rimuovi digitando il pulsante 'Visitato' e/o 'Preferiti' oppure puoi andare nel menù laterale e rimuoverlo premendo il pulsante 'Cestino' presente alla fine di ciascuna voce. "
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="10sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\nD: Se volessi visualizzare il punto di interesse ma non ricordassi il nome? \nR: Nessun problema: abbiamo messo a tua disposizione un pulsante che ti rimanda alla schermata del punto di interesse in questione. "
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="10sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\n\nPer ulteriori domande:\n"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="email"
+                android:linksClickable="true"
+                android:textAlignment="center"
+                android:text="@string/contact_us"/>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
+
+
+
+
+
+</android.support.design.widget.CoordinatorLayout>

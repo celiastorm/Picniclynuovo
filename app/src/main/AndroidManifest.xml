@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS"></uses-permission>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
     <permission
         android:name="com.picnicly.picnic_ly.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -89,6 +90,9 @@
 
         <activity
             android:name=".HomeActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+
             android:label="@string/title_activity_home">
             <intent-filter>
 
@@ -97,6 +101,8 @@
         </activity>
         <activity
             android:name=".HomeActivityOff"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_home">
             <intent-filter>
 
@@ -106,11 +112,25 @@
         <activity
             android:name=".Preferiti"
             android:label="@string/title_activity_preferiti"
-            android:theme="@style/AppTheme.NoActionBar" />
+
+            android:parentActivityName=".HomeActivity" />
         <activity
             android:name=".Visitati"
             android:label="@string/title_activity_visitati"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+            android:parentActivityName=".HomeActivity" />
+        <activity
+            android:name=".HelpActivity"
+            android:label="Help"
+            android:parentActivityName=".HomeActivity"/>
+        <activity
+            android:name=".FaqActivity"
+            android:label="FAQ"
+            android:parentActivityName=".HelpActivity"/>
+        <activity android:name=".GuidaActivity" android:label="Guida" android:parentActivityName=".HelpActivity"/>
+        <activity android:name=".CreditsActivity" android:label="Credits" android:parentActivityName=".HelpActivity"/>
+        <activity android:name=".ContattiActivity" android:label="Contatti" android:parentActivityName=".HelpActivity"> </activity>
+
         <activity
             tools:replace="android:theme"
             android:name="com.facebook.FacebookActivity"

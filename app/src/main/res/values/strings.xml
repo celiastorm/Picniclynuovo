@@ -101,9 +101,22 @@ limitations under the License. Lorem ipsum dolor sit amet, consectetuer adipisci
     <string name="action_anchor_disable">Disable Anchor Point</string>
     <string name="hello"><![CDATA[<b>The Awesome Sliding Up Panel</b><br/> Brought to you by<br/><a href="http://umanoapp.com">http://umanoapp.com</a>]]></string>
     <string name="follow"><![CDATA[Follow us<br/>on <a href="http://twitter.com/umanoapp">Twitter</a>]]></string>
-    <string name="title_activity_preferiti">Preferiti</string>
+    <string name="send_to">Condividi</string>
     <string name="large_text">
         "Qui puoi trovare i "
     </string>
+    <string name="visitato">VISITATO</string>
+    <string name="preferiti">PREFERITI</string>
+    <string name="condividi">CONDIVIDI</string>
+    <string name="title_activity_preferiti">Preferiti</string>
     <string name="title_activity_visitati">Visitati</string>
+    <string name="contact_us"><a href="picnicly.app@gmail.com">picnicly.app@gmail.com</a></string>
+    <string name="credits_text">CEVID - Centro Veneto di Innovazione Digitale per Cittadini, Imprese e Pubblica Amministrazione.
+        Università Ca Foscari e Regione del Veneto </string>
+    <string name="credits_text2"> Azione 1: Open Data della Regione Veneto: dal paradigma DaaS per la fruizione
+        dei dati alle smart app </string>
+    <string name="credits_text3">Coordinatore: prof. A.Cortesi</string>
+    <string name="credits_text4"> App progettata e realizzata da: </string>
+    <string name="credits_text5">Corso di laurea in Informatica - Università Ca Foscari</string>
+
 </resources>

@@ -1,8 +1,5 @@
 package com.picnicly.picnic_ly;
 
-/**
- * Created by Giovy on 30/01/2017.
- */
 
 import android.content.Intent;
 import android.content.SharedPreferences;

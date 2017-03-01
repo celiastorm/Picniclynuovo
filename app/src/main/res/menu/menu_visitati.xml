@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.picnicly.picnic_ly.Visitati">
+
+    <item
+        android:id="@+id/action_visitati"
+        android:title="visitati"
+        android:icon="@drawable/ic_visitati"
+        android:enabled="false"
+        app:showAsAction="ifRoom" />
+</menu>

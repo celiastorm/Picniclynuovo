@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.picnicly.picnic_ly.Visitati">
+    tools:context=".HomeActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rec_list2"
@@ -47,15 +47,5 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@+id/app_bar"
-        app:layout_anchorGravity="top|left"
-        app:srcCompat="@drawable/ic_arrow_back_black_36dp"
-        android:layout_gravity="bottom|right" />
 
 </android.support.design.widget.CoordinatorLayout>
