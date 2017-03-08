@@ -4,29 +4,25 @@
     android:layout_height="match_parent" >
 
     <TextView
-            android:id="@+id/image_count"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hello World"
-           android:textColor="#2c712b"
-            android:textSize="25dp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginTop="25dp" />
+        android:id="@+id/image_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="150dp"
+        android:text="Hello World"
+        android:textColor="#2c712b"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="25dp" />
 
-        <TextView
-            android:id="@+id/image_count2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hello World"
-            android:textSize="15dp"
-            android:gravity="center"
-            android:layout_marginTop="25dp" />
-
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp" />
+    <TextView
+        android:id="@+id/image_count2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:text="Hello World"
+        android:textSize="15dp"
+        android:gravity="center"
+        android:layout_marginTop="25dp" />
 
 </LinearLayout>

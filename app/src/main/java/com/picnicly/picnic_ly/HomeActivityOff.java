@@ -1,5 +1,6 @@
 package com.picnicly.picnic_ly;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -26,6 +27,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.location.Location;
@@ -107,6 +109,12 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.widget.TextView;
 import com.facebook.FacebookSdk;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.picnicly.picnic_ly.dummy.DummyContent;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -178,7 +186,13 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
 
         android.app.FragmentManager fm = getFragmentManager();
 
-
+        View hView =  navigationView.getHeaderView(0);
+        TextView nav_user = (TextView)hView.findViewById(R.id.user);
+        TextView nav_mail = (TextView)hView.findViewById(R.id.mail);
+        ImageView nav_pic = (ImageView)hView.findViewById(R.id.imageView);
+        nav_pic.setVisibility(View.INVISIBLE);
+        nav_mail.setVisibility(View.GONE);
+        nav_user.setVisibility(View.INVISIBLE);
 
 
         ListView lv = (ListView) findViewById(R.id.list);
@@ -334,7 +348,23 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
 
             }
         });
-
+        Intent intent = getIntent();
+        if(intent.getStringExtra("activity")!=null) {
+            if (intent.getStringExtra("activity").equals("main")) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        HomeActivityOff.this);
+                builder.setTitle("RISPETTA L'AMBIENTE");
+                builder.setMessage("Ricordati di non abbandonare rifiuti, impegnandoti sempre a mantenere pulito l'ambiente che ti circonda.");
+                builder.setNeutralButton("Ok, ricevuto!",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                //Toast.makeText(getApplicationContext(), "OK is clicked", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                builder.show();
+            }
+        }
 
     }
 
@@ -355,6 +385,8 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
 
     @Override
     public void onMapReady(GoogleMap map) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference mRootRef = database.getReference();
         m = map;
         map.getUiSettings().setRotateGesturesEnabled(false);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -405,10 +437,131 @@ Anchors the marker on the bottom left
         //marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table));
         //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto"));
         //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv"));
-        markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv")));
-        markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto")));
+        //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv")));
+        //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto")));
 // adding marker
         //m.addMarker(marker);
+
+
+        final Query puntiPicnic = mRootRef.child("d").child("__count")
+                .orderByValue();
+
+        puntiPicnic.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot placeSnapshot: dataSnapshot.getChildren()) {
+                    String nome = (String) placeSnapshot.child("Nome").getValue();
+                    Long lat = (Long)(placeSnapshot.child("Latitudine").getValue());
+                    Long lon = (Long)(placeSnapshot.child("Longitudine").getValue());
+                    Double la = lat.doubleValue();
+                    Double lo = lon.doubleValue();
+
+                    if(la/1000000 >= 4d && la/1000000 <= 5d){
+                        la = la/100000;
+                    }
+                    else if(la/10000000 >= 4d && la/10000000 <= 5d){
+                        la = la/1000000;
+                    }
+                    else if(la/100000000 >= 4d && la/100000000 <= 5d){
+                        la = la/10000000;
+                    }
+                    else {
+                        la = la / 1000000000;
+                        la = la / 10000;
+                    }
+
+                    if(lo/1000000 >= 1d && lo/1000000 <= 2d){
+                        lo = lo/100000;
+                    }
+                    else if(lo/10000000 >= 1d && lo/10000000 <= 2d){
+                        lo = lo/1000000;
+                    }
+                    else if(lo/100000000 >= 1d && lo/100000000 <= 2d){
+                        lo = lo/10000000;
+                    }
+                    else {
+                        lo = lo / 1000000000;
+                        lo = lo / 10000;
+                    }
+
+
+
+                    LatLng latLng = new LatLng(la, lo);
+                    Log.i(TAG, "onChildAdded:" + nome);
+                    Log.i(TAG, "onChildAdded:" + la);
+                    markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+        final Query puntiCamp = mRootRef.child("d").child("camp")
+                .orderByValue();
+
+        puntiCamp.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot placeSnapshot: dataSnapshot.getChildren()) {
+                    String nome = (String) placeSnapshot.child("Nome").getValue();
+                    Long lat = (Long)(placeSnapshot.child("Latitudine").getValue());
+                    Long lon = (Long)(placeSnapshot.child("Longitudine").getValue());
+                    Double la = lat.doubleValue();
+                    Double lo = lon.doubleValue();
+
+                    if(la/1000000 >= 4d && la/1000000 <= 5d){
+                        la = la/100000;
+                    }
+                    else if(la/10000000 >= 4d && la/10000000 <= 5d){
+                        la = la/1000000;
+                    }
+                    else if(la/100000000 >= 4d && la/100000000 <= 5d){
+                        la = la/10000000;
+                    }
+                    else {
+                        la = la / 1000000000;
+                        la = la / 10000;
+                    }
+
+                    if(lo/1000000 >= 1d && lo/1000000 <= 2d){
+                        lo = lo/100000;
+                    }
+                    else if(lo/10000000 >= 1d && lo/10000000 <= 2d){
+                        lo = lo/1000000;
+                    }
+                    else if(lo/100000000 >= 1d && lo/100000000 <= 2d){
+                        lo = lo/10000000;
+                    }
+                    else {
+                        lo = lo / 1000000000;
+                        lo = lo / 10000;
+                    }
+
+
+
+                    LatLng latLng = new LatLng(la, lo);
+                    Log.i(TAG, "onChildAdded:" + nome);
+                    Log.i(TAG, "onChildAdded:" + la);
+                    markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.tent)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
     }
 
     public static void hideSoftKeyboard(Activity activity) {

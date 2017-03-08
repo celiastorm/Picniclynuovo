@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 public class Visitati extends AppCompatActivity {
 
@@ -25,6 +26,8 @@ public class Visitati extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ImageView img = (ImageView)findViewById(R.id.imageView);
+        img.setImageResource(R.drawable.picnic);
 
         recView = (RecyclerView)findViewById(R.id.rec_list2);
         recView.setLayoutManager(new LinearLayoutManager(this));

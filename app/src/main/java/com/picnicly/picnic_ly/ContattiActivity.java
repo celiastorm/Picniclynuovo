@@ -1,15 +1,15 @@
 package com.picnicly.picnic_ly;
 
+import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 public class ContattiActivity extends AppCompatActivity {
-    ViewPager viewPager;
-    CustomSwipeAdapter adapter;
+    private ViewPager viewPager;
+    private CustomSwipeAdapter adapter;
 
 
     @Override

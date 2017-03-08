@@ -40,6 +40,11 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DatabaseError;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -69,6 +74,8 @@ public class MainActivity extends BaseActivity implements
     private CallbackManager mCallbackManager;
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
+    private DatabaseReference mDatabase;
+    FirebaseDatabase database;
 
 
     @Override
@@ -150,10 +157,33 @@ public class MainActivity extends BaseActivity implements
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    database = FirebaseDatabase.getInstance();
+                    mDatabase = database.getReference();
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    /*if(!mDatabase.child("users").child("uid").getKey().contains(user.getUid())){
+                        writeNewUser(user.getUid(),user.getDisplayName(),user.getEmail());
+                        Log.d(TAG, "PERCHEEEE" + user.getUid());
+                    }*/
+
+                    mDatabase.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                // TODO: handle the case where the data already exists
+                                writeNewUser(user.getUid(),user.getDisplayName(),user.getEmail());
+                            }
+                            else {
+                                // TODO: handle the case where the data does not yet exist
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError firebaseError) { }
+                    });
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -292,7 +322,7 @@ public class MainActivity extends BaseActivity implements
             findViewById(R.id.button_facebook_login).setVisibility(View.GONE);
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.skip).setVisibility(View.GONE);
-            //findViewById(R.id.button_facebook_signout).setVisibility(View.VISIBLE);
+            findViewById(R.id.button_facebook_signout).setVisibility(View.GONE);
         } else {
             //mStatusTextView.setText(R.string.signed_out);
             //mDetailTextView.setText(null);
@@ -384,5 +414,11 @@ public class MainActivity extends BaseActivity implements
             }
         }
 
+    }
+
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email, userId);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("users").child(userId).setValue(user);
     }
 }

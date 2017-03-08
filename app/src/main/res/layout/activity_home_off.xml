@@ -135,7 +135,8 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical|end"
                 android:layout_gravity="center|end"
-                android:background="@drawable/ic_action_go"
+                android:tint="@color/white"
+                android:background="@drawable/ic_pin_drop"
                 android:paddingLeft="10dp"/>
 
 

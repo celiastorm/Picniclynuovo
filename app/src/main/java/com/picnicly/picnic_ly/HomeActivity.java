@@ -88,8 +88,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import android.content.res.Configuration;
@@ -99,6 +101,13 @@ import android.content.res.Configuration;
 import android.net.Uri;
 
 import com.facebook.FacebookSdk;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST;
@@ -127,8 +136,13 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleApiClient mGoogleApiClient;
     private SlidingUpPanelLayout mLayout;
     List<Marker> markers = new ArrayList<Marker>();
+    List<LatLng> latLngList = new ArrayList<>();
+    HashMap<Marker, String> myMarks = new HashMap<Marker, String>();
     private SmoothActionBarDrawerToggle drawerTogg;
     String activity;
+    private DatabaseReference mDatabase;
+    FirebaseDatabase database;
+
 
 
 
@@ -142,6 +156,8 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
         map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         /*map.getMapAsync(this);*/
         initializeMap();
+
+
 
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -408,6 +424,10 @@ public class HomeActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap map) {
+        //DATABASE
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference mRootRef = database.getReference();
+
         m = map;
         map.getUiSettings().setRotateGesturesEnabled(false);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -447,10 +467,12 @@ Anchors the marker on the bottom left
         LatLng sydney = new LatLng(27.746974, 85.301582);
         LatLng tv = new LatLng(45.6662855, 12.2420720);
         LatLng quinto = new LatLng(45.6562880, 12.166667);
+
         m.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
         markers.add(m.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal")));
         //m.addMarker(new MarkerOptions().position(tv).title("Tv, tv"));
         markers.add(m.addMarker(new MarkerOptions().position(tv).title("Tv, tv")));
+
         //m.addMarker(new MarkerOptions().position(quinto).title("Tv, tvv"));
         //MarkerOptions marker = new MarkerOptions().position(quinto).title("Hello Maps");
 
@@ -458,14 +480,133 @@ Anchors the marker on the bottom left
         //marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table));
         //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto"));
         //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv"));
-        markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv")));
-        markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto")));
-
-
-
+        //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv")));
+        //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto")));
 // adding marker
         //m.addMarker(marker);
+
+        final Query puntiPicnic = mRootRef.child("d").child("__count")
+                .orderByValue();
+
+        puntiPicnic.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot placeSnapshot: dataSnapshot.getChildren()) {
+                    String nome = (String) placeSnapshot.child("Nome").getValue();
+                    Long lat = (Long)(placeSnapshot.child("Latitudine").getValue());
+                    Long lon = (Long)(placeSnapshot.child("Longitudine").getValue());
+                    String gid = String.valueOf(placeSnapshot.child("gid").getValue());
+                    Double la = lat.doubleValue();
+                    Double lo = lon.doubleValue();
+
+                    if(la/1000000 >= 4d && la/1000000 <= 5d){
+                        la = la/100000;
+                    }
+                    else if(la/10000000 >= 4d && la/10000000 <= 5d){
+                        la = la/1000000;
+                    }
+                    else if(la/100000000 >= 4d && la/100000000 <= 5d){
+                        la = la/10000000;
+                    }
+                    else {
+                        la = la / 1000000000;
+                        la = la / 10000;
+                    }
+
+                    if(lo/1000000 >= 1d && lo/1000000 <= 2d){
+                        lo = lo/100000;
+                    }
+                    else if(lo/10000000 >= 1d && lo/10000000 <= 2d){
+                        lo = lo/1000000;
+                    }
+                    else if(lo/100000000 >= 1d && lo/100000000 <= 2d){
+                        lo = lo/10000000;
+                    }
+                    else {
+                        lo = lo / 1000000000;
+                        lo = lo / 10000;
+                    }
+
+
+
+                    LatLng latLng = new LatLng(la, lo);
+                    Log.i(TAG, "onChildAdded:" + nome);
+                    Log.i(TAG, "onChildAdded:" + la);
+                    //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+                    myMarks.put((m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome))),gid);
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+        final Query puntiCamp = mRootRef.child("d").child("camp")
+                .orderByValue();
+
+        puntiCamp.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot placeSnapshot: dataSnapshot.getChildren()) {
+                    String nome = (String) placeSnapshot.child("Nome").getValue();
+                    Long lat = (Long)(placeSnapshot.child("Latitudine").getValue());
+                    Long lon = (Long)(placeSnapshot.child("Longitudine").getValue());
+                    Double la = lat.doubleValue();
+                    Double lo = lon.doubleValue();
+
+                    if(la/1000000 >= 4d && la/1000000 <= 5d){
+                        la = la/100000;
+                    }
+                    else if(la/10000000 >= 4d && la/10000000 <= 5d){
+                        la = la/1000000;
+                    }
+                    else if(la/100000000 >= 4d && la/100000000 <= 5d){
+                        la = la/10000000;
+                    }
+                    else {
+                        la = la / 1000000000;
+                        la = la / 10000;
+                    }
+
+                    if(lo/1000000 >= 1d && lo/1000000 <= 2d){
+                        lo = lo/100000;
+                    }
+                    else if(lo/10000000 >= 1d && lo/10000000 <= 2d){
+                        lo = lo/1000000;
+                    }
+                    else if(lo/100000000 >= 1d && lo/100000000 <= 2d){
+                        lo = lo/10000000;
+                    }
+                    else {
+                        lo = lo / 1000000000;
+                        lo = lo / 10000;
+                    }
+
+
+
+                    LatLng latLng = new LatLng(la, lo);
+                    Log.i(TAG, "onChildAdded:" + nome);
+                    Log.i(TAG, "onChildAdded:" + la);
+                    markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.tent)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
     }
+
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager =
@@ -479,7 +620,8 @@ Anchors the marker on the bottom left
     public boolean onMarkerClick(final Marker mark) {
 
         //if (mark.equals(marker))
-        if(markers.contains(mark))
+        //if(markers.contains(mark))
+        if(myMarks.containsKey(mark))
         {
             if(mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN){
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
@@ -487,6 +629,8 @@ Anchors the marker on the bottom left
             mLayout.findViewById(R.id.dragView).setVisibility(View.VISIBLE);
             mLayout.setPanelHeight(150);
             final String address = mark.getTitle()+"\n"+getCompleteAddressString(mark.getPosition().latitude, mark.getPosition().longitude);
+            final Double lat = mark.getPosition().latitude;
+            final Double lon = mark.getPosition().longitude;
             //mLayout.findViewById(R.id.panel).setVisibility(View.VISIBLE);
             TextView t = (TextView) findViewById(R.id.name);
             t.setText(address);
@@ -501,6 +645,65 @@ Anchors the marker on the bottom left
                     sendIntent.putExtra(Intent.EXTRA_TEXT, address);
                     sendIntent.setType("text/plain");
                     startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+                }
+            });
+
+            Button pref = (Button) findViewById(R.id.preferiti);
+            //f.setMovementMethod(LinkMovementMethod.getInstance());
+            pref.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    database = FirebaseDatabase.getInstance();
+                    String gd = myMarks.get(mark);
+                    mDatabase = database.getReference();
+                        if (!mDatabase.child("users").child(uid).child("pref").getKey().contains(gd)) {
+                            Pref p = new Pref(gd,mark.getTitle(),lat,lon);
+                            mDatabase.child("users").child(uid).child("pref").child(gd).setValue(p);
+
+                            /*ChildEventListener childEventListener = new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                                    Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
+                                    dataSnapshot.child("preferiti");
+
+
+                                    // A new comment has been added, add it to the displayed list
+
+                                    // ...
+                                }
+
+                                @Override
+                                public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                                    Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+
+                                    // ...
+                                }
+
+                                @Override
+                                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                                    Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
+
+                                    // A comment has changed, use the key to determine if we are displaying this
+                                    // comment and if so remove it.
+                                    String commentKey = dataSnapshot.getKey();
+
+                                    // ...
+                                }
+
+                                @Override
+                                public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                                    Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            };
+                            mDatabase.addChildEventListener(childEventListener);*/
+
+                    }
                 }
             });
 
@@ -887,4 +1090,6 @@ Anchors the marker on the bottom left
             this.runnable = runnable;
         }
     }
+
+
 }
