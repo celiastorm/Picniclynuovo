@@ -12,12 +12,10 @@ import android.widget.TextView;
 
 public class CustomSwipeAdapter extends PagerAdapter {
 
-    public String[] stringa = {"Paolo Vedorin","Mariagiovanna Czarnecki","Dora Pavan","Martina Lunardi","Claudia Farronato"};
+    public String[] stringa = {"Paolo Vedorin","Mariagiovanna Czarnecki","Dora Pavan"};
     public String[] stringa2 = {"Nato a Treviso, studente presso il Liceo Classico 'A.Canova' di Treviso indirizzo classico, ora è laureando in scienze informatiche presso l'università Ca' Foscari",
             "Nata a Treviso, diplomata presso il Liceo Classico 'A.Canova' di Treviso indirizzo classico, ora è laureanda in tecnologia e scienze dell'informazione presso l'università Ca' Foscari, Venezia",
-            "Nata a Treviso, diplomata presso il Liceo Classico 'A.Canova' di Treviso indirizzo linguistico, ora è laureanda in tecnologia e scienze dell'informazione presso l'università Ca' Foscari, Venezia",
-            "Nata ad Adria, diplomata presso 'I.I.S. Polotecnico' di Adria, ora è laureanda in tecnologia e scienze dell'informazione presso l'università Ca' Foscari, Venezia",
-            "Nata a Bassano del Grappa, diplomata presso 'ITCG Luigi Einaudi' di Bassano del Grappa, ora è laureanda in tecnologia e scienze dell'informazione presso l'università Ca' Foscari, Venezia"};
+            "Nata a Treviso, diplomata presso il Liceo Classico 'A.Canova' di Treviso indirizzo linguistico, ora è laureanda in tecnologia e scienze dell'informazione presso l'università Ca' Foscari, Venezia"};
     private Context ctx;
     private LayoutInflater layoutInflater;
 
@@ -27,7 +25,7 @@ public class CustomSwipeAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return 3;
     }
 
     @Override

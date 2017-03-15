@@ -29,15 +29,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.picnicly.picnic_ly.R.drawable.garbage;
 import static com.picnicly.picnic_ly.R.drawable.ic_delete_black_36dp;
 import static com.picnicly.picnic_ly.R.drawable.ic_place_black_36dp;
+import static com.picnicly.picnic_ly.R.drawable.placeholder;
 
 public class Preferiti extends AppCompatActivity {
 
     private RecyclerView recView;
     private MyAdapterPreferiti adapter;
-    private static int icon = ic_place_black_36dp;
-    private static int icon2 = ic_delete_black_36dp;
+    private static int icon = placeholder;
+    private static int icon2 = garbage;
     public static final String TAG = "Preferiti";
     public List <Pref> preferiti;
 
@@ -48,7 +50,8 @@ public class Preferiti extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        ImageView img = (ImageView) findViewById(R.id.imageView);
+        img.setImageResource(R.drawable.rio);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference mRootRef = database.getReference();
@@ -56,29 +59,32 @@ public class Preferiti extends AppCompatActivity {
         final Query prefe = mRootRef.child("users").child(uid).child("pref")
                 .orderByValue();
         final List<Pref> p = new ArrayList<Pref>();
+        adapter = new MyAdapterPreferiti(p, this);
         prefe.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                p.clear();
                 for (DataSnapshot placeSnapshot : dataSnapshot.getChildren()) {
                     String nome = (String) placeSnapshot.child("name").getValue();
                     Double lat = (Double) (placeSnapshot.child("lat").getValue());
                     Double lon = (Double) (placeSnapshot.child("lon").getValue());
-                    String gid = (String)(placeSnapshot.child("id").getValue());
+                    String gid = (String) (placeSnapshot.child("id").getValue());
                     Double la = lat.doubleValue();
                     Double lo = lon.doubleValue();
-                    Pref pf = new Pref(gid,nome,lat,lon);
-                    p.add(pf);
-                    adapter.notifyItemInserted(p.size());
-                    pf.setImageResId(icon);
-                    pf.setImageResId2(icon2);
-                    LatLng latLng = new LatLng(la, lo);
-                    Log.i(TAG, "IDDDDDDDDDDDDDDDDDDDD" + pf.getId());
-                    Log.i(TAG, "onChildAdded:" + la);
-                    //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
-                    //myMarks.put((m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome))), gid);
-                }
 
+                    Pref pf = new Pref(gid, nome, lat, lon);
+                        p.add(pf);
+                        adapter.notifyItemInserted(p.size());
+                        pf.setImageResId(icon);
+                        pf.setImageResId2(icon2);
+                        LatLng latLng = new LatLng(la, lo);
+                        Log.i(TAG, "IDDDDDDDDDDDDDDDDDDDD" + pf.getId());
+                        Log.i(TAG, "onChildAdded:" + la);
+                        //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+                        //myMarks.put((m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome))), gid);
+
+                }
+                adapter.notifyDataSetChanged();
             }
 
 
@@ -89,12 +95,12 @@ public class Preferiti extends AppCompatActivity {
                 // ...
             }
         });
-        ImageView img = (ImageView) findViewById(R.id.imageView);
-        img.setImageResource(R.drawable.picnic2);
+
+
 
         recView = (RecyclerView) findViewById(R.id.rec_list);
         recView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new MyAdapterPreferiti(p, this);
+
         recView.setAdapter(adapter);
     }
     public void sendMePlace(View view){ //TODO: replace with "place me" action

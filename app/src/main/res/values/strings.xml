@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Picnic-ly</string>
+    <string name="app_name">PICNICly</string>
     <string name="edit_message">Cerca</string>
     <string name="search_button"></string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_main">Login</string>
-    <string name="title_activity_home">Picnic-ly</string>
+    <string name="title_activity_home">PICNICly</string>
     <string name="search_location_here">Inserisci una località qui</string>
     <string name="facebook_app_id">260863734343489</string>
     <string name="facebook_app_id2">265203190575740</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="Toast_Error">Errore</string>
+    <string name="next">Segui</string>
+    <string name="skip">Salta</string>
+    <string name="gotit">OK</string>
 
     <string name="action_settings">Settings</string>
     <string name="info">Informazioni</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="info_fragment">Picnic-ly 1.0
-        &#xA;Massive Dynamics
-        &#xA;picnicly.app@gmail.com</string>
+    <string name="info_fragment">Nome app: PICNICly
+        &#xA;Versione: 1.0
+
+        &#xA;Sviluppata da: Massive Dynamics
+        &#xA;Contattaci: picnicly.app@gmail.com</string>
     <string name="label_google_sign_in">Firebase + Google Sign In</string>
     <string name="desc_google_sign_in">Use a Google Sign In credential to authenticate with Firebase.</string>
 
@@ -105,7 +110,7 @@ limitations under the License. Lorem ipsum dolor sit amet, consectetuer adipisci
     <string name="large_text">
         "Qui puoi trovare i "
     </string>
-    <string name="visitato">VISITATO</string>
+    <string name="visitato">VISITATI</string>
     <string name="preferiti">PREFERITI</string>
     <string name="condividi">CONDIVIDI</string>
     <string name="title_activity_preferiti">Preferiti</string>
@@ -118,5 +123,25 @@ limitations under the License. Lorem ipsum dolor sit amet, consectetuer adipisci
     <string name="credits_text3">Coordinatore: prof. A.Cortesi</string>
     <string name="credits_text4"> App progettata e realizzata da: </string>
     <string name="credits_text5">Corso di laurea in Informatica - Università Ca Foscari</string>
+    <!-- welc1 -->
+    <string name="welc1_title">ESPLORA</string>
+    <string name="welc1_descr">Esplora i punti di interesse intorno a te, come parchi e aree picnic!</string>
+
+    <!-- welc2 -->
+    <string name="welc2_title">VISITATI</string>
+    <string name="welc2_descr">Se sei registrato, aggiungi i punti di interessi visitati, così da scoprire sempre posti nuovi!</string>
+
+    <!-- welc3 -->
+    <string name="welc3_title">PREFERITI</string>
+    <string name="welc3_descr">Se ti registri, puoi anche aggiungere i posti che ti hanno emozionato di più!</string>
+
+    <!-- welc4 -->
+    <string name="welc4_title">HELP</string>
+    <string name="welc4_descr">Ricordati che è presente una sezione help in cui potrai sempre trovare le risposte ai tuoi dubbi!</string>
+
+    <!-- welc5 -->
+    <string name="welc5_title">DIVERTITI</string>
+    <string name="welc5_descr">Ed ora divertiti con PICNICly! :)</string>
+
 
 </resources>

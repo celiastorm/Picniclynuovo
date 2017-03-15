@@ -28,11 +28,7 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.picnicly.picnic_ly.permission.MAPS_RECEIVE" />
-    <provider android:authorities="com.facebook.app.FacebookContentProvider148851038810437"
-        android:name="com.facebook.FacebookContentProvider"
-        android:exported="true" />
 
-    <uses-library android:name="com.google.android.maps" />
 
     <application
         android:name=".MyApplication"
@@ -42,7 +38,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <provider android:authorities="com.facebook.app.FacebookContentProvider148851038810437"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
 
+        <uses-library android:name="com.google.android.maps" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -53,7 +53,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCVcpB6u0EMdKdbbXkgH4E_h1nW8kt2d9s" />
+            android:value="AIzaSyARxx9jxalVH_GLu6SQ_VRMHm9dUw-VjNE" />
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
 
         <activity
@@ -87,7 +87,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".WelcSlider"
+            android:theme="@style/Theme.Design.NoActionBar">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+        <activity android:name=".WelcSliderOff"
+            android:theme="@style/Theme.Design.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".HomeActivity"
             android:configChanges="orientation|screenSize"

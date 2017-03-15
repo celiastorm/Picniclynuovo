@@ -4,28 +4,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.StrictMode;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,11 +24,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -52,22 +38,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.Toast;
-import android.text.Html;
-import android.text.Spanned;
-
-
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -77,49 +50,22 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 import java.util.zip.Inflater;
-
 import android.widget.TextView;
-
-
-
-
-/**
- * Created by Giovy on 28/01/2017.
- */
-
-
-import android.content.res.Resources;
 import android.net.Uri;
-import android.text.TextUtils;
-import android.widget.TextView;
-import com.facebook.FacebookSdk;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.picnicly.picnic_ly.dummy.DummyContent;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import static android.R.attr.data;
-
 
 
 
@@ -131,19 +77,16 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
     private SupportMapFragment map;
     public static final String TAG = "HomeActivityOff";
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
-    private Toolbar toolbar;
-    private NavigationView nvDrawer;
-    private ActionBarDrawerToggle drawerToggle;
-    private NavigationView mDrawer;
-    private DrawerLayout mDrawerLayout;
-    SupportMapFragment mMapFragment;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private Button search;
-    int PLACE_PICKER_REQUEST = 1;
-    String placeName, address;
-    private static final float ALPHA_DIM_VALUE = 0.1f;
     private SlidingUpPanelLayout mLayout;
     List<Marker> markers = new ArrayList<Marker>();
+    HashMap<Marker, String> myMarks = new HashMap<Marker, String>();
+    HashMap<String, String> myIndex = new HashMap<String, String>();
+    HashMap<String, Luogo> myPlaces = new HashMap<String, Luogo>();
+    HashMap<String, Float> myRates = new HashMap<String, Float>();
+    List<String> votedId = new ArrayList<String>();
+    Rate token = new Rate();
+    private DatabaseReference mDatabase;
+    FirebaseDatabase database;
 
 
 
@@ -153,7 +96,19 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
         Inflater inflater = null;
         super.onCreate(savedInstanceState);
         //overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+
+        PrefManager prefManager = new PrefManager(getApplicationContext());
+        // make first time launch TRUE
+        //prefManager.setFirstTimeLaunch(true);
+        if(prefManager.isFirstTimeLaunch()) {
+            //prefManager.setFirstTimeLaunch(false);
+            startActivity(new Intent(HomeActivityOff.this, WelcSliderOff.class));
+            finish();
+        }
+
         setContentView(R.layout.activity_home_off);
+
+
         map = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         /*map.getMapAsync(this);*/
         initializeMap();
@@ -166,14 +121,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -203,32 +151,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-        List<String> your_array_list = Arrays.asList(
-                "This",
-                "Is",
-                "An",
-                "Example",
-                "ListView",
-                "That",
-                "You",
-                "Can",
-                "Scroll",
-                ".",
-                "It",
-                "Shows",
-                "How",
-                "Any",
-                "Scrollable",
-                "View",
-                "Can",
-                "Be",
-                "Included",
-                "As",
-                "A",
-                "Child",
-                "Of",
-                "SlidingUpPanelLayout"
-        );
+        List<String> your_array_list = Arrays.asList();
 
         // This is the array adapter, it takes the context of the activity as a
         // first parameter, the type of list view as a second parameter and your
@@ -261,7 +184,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
                 Log.i(TAG, "onPanelSlide, offset " + slideOffset);
                 if(slideOffset==0.0){
                     FrameLayout img = (FrameLayout) findViewById(R.id.frm);
-                    //mLayout.findViewById(R.id.imageView).setVisibility(View.VISIBLE);
+                    //mLayout.findViewById(R.id.imageView).setVisibility(View.GONE);
                     img.setVisibility(View.GONE);
                     mLayout.setPanelHeight(150);
                 }
@@ -278,6 +201,7 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
                 Log.i(TAG, "onPanelStateChanged " + newState);
                 if(mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED){
                     mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+
                 }
             }
         });
@@ -402,16 +326,10 @@ public class HomeActivityOff extends AppCompatActivity implements OnMapReadyCall
         map.setMyLocationEnabled(true);
         map.setOnMarkerClickListener(this);
 
-        /*map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(47.17, 27.5699), 16));
-        map.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher)).anchor(0.0f, 1.0f) //
-Anchors the marker on the bottom left
-                .position(new LatLng(47.17, 27.5699))); //Iasi, Romania*/
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 final EditText editText = (EditText) findViewById(R.id.editText);
-                //Toast.makeText(getApplicationContext(), latLng.toString(), Toast.LENGTH_LONG).show();
                 editText.clearFocus();
                 hideSoftKeyboard(HomeActivityOff.this);
             }
@@ -422,25 +340,6 @@ Anchors the marker on the bottom left
 
         //To request location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, this);
-        LatLng sydney = new LatLng(27.746974, 85.301582);
-        LatLng tv = new LatLng(45.6662855, 12.2420720);
-        LatLng quinto = new LatLng(45.6562880, 12.166667);
-        m.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal"));
-        //m.addMarker(new MarkerOptions().position(tv).title("Tv, tv"));
-        //m.addMarker(new MarkerOptions().position(quinto).title("Tv, tvv"));
-        //MarkerOptions marker = new MarkerOptions().position(quinto).title("Hello Maps");
-        markers.add(m.addMarker(new MarkerOptions().position(sydney).title("Kathmandu, Nepal")));
-        //m.addMarker(new MarkerOptions().position(tv).title("Tv, tv"));
-        markers.add(m.addMarker(new MarkerOptions().position(tv).title("Tv, tv")));
-
-// Changing marker icon
-        //marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table));
-        //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto"));
-        //m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv"));
-        //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.forest)).anchor(0.0f, 1.0f).position(tv).title("Tv")));
-        //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.picnic_table)).anchor(0.0f, 1.0f).position(quinto).title("Quinto")));
-// adding marker
-        //m.addMarker(marker);
 
 
         final Query puntiPicnic = mRootRef.child("d").child("__count")
@@ -451,10 +350,18 @@ Anchors the marker on the bottom left
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot placeSnapshot: dataSnapshot.getChildren()) {
                     String nome = (String) placeSnapshot.child("Nome").getValue();
+                    String gid = String.valueOf(placeSnapshot.child("gid").getValue());
+                    String num = String.valueOf(placeSnapshot.getKey());
                     Long lat = (Long)(placeSnapshot.child("Latitudine").getValue());
                     Long lon = (Long)(placeSnapshot.child("Longitudine").getValue());
                     Double la = lat.doubleValue();
                     Double lo = lon.doubleValue();
+                    Long s = ((placeSnapshot.child("Voto").getValue(Long.class)));
+                    Long n = ((placeSnapshot.child("Nvoti").getValue(Long.class)));
+                    float somma = s.floatValue();
+                    int nvoti = n.intValue();
+                    Luogo place = new Luogo(gid,num,somma,nvoti);
+                    myPlaces.put(gid,place);
 
                     if(la/1000000 >= 4d && la/1000000 <= 5d){
                         la = la/100000;
@@ -489,8 +396,8 @@ Anchors the marker on the bottom left
                     LatLng latLng = new LatLng(la, lo);
                     Log.i(TAG, "onChildAdded:" + nome);
                     Log.i(TAG, "onChildAdded:" + la);
-                    markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.basket)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
-
+                    //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.bskt)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+                    myMarks.put((m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.bskt)).anchor(0.0f, 1.0f).position(latLng).title(nome))),gid);
                 }
             }
 
@@ -512,9 +419,17 @@ Anchors the marker on the bottom left
                 for (DataSnapshot placeSnapshot: dataSnapshot.getChildren()) {
                     String nome = (String) placeSnapshot.child("Nome").getValue();
                     Long lat = (Long)(placeSnapshot.child("Latitudine").getValue());
+                    String gid = String.valueOf(placeSnapshot.child("gid").getValue());
+                    String num = String.valueOf(placeSnapshot.getKey());
                     Long lon = (Long)(placeSnapshot.child("Longitudine").getValue());
                     Double la = lat.doubleValue();
                     Double lo = lon.doubleValue();
+                    Long s = ((placeSnapshot.child("Voto").getValue(Long.class)));
+                    Long n = ((placeSnapshot.child("Nvoti").getValue(Long.class)));
+                    float somma = s.floatValue();
+                    int nvoti = n.intValue();
+                    Luogo place = new Luogo(gid,num,somma,nvoti);
+                    myPlaces.put(gid,place);
 
                     if(la/1000000 >= 4d && la/1000000 <= 5d){
                         la = la/100000;
@@ -549,7 +464,8 @@ Anchors the marker on the bottom left
                     LatLng latLng = new LatLng(la, lo);
                     Log.i(TAG, "onChildAdded:" + nome);
                     Log.i(TAG, "onChildAdded:" + la);
-                    markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.tent)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+                    //markers.add(m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.tent)).anchor(0.0f, 1.0f).position(latLng).title(nome)));
+                    myMarks.put((m.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.tent)).anchor(0.0f, 1.0f).position(latLng).title(nome))),gid);
 
                 }
             }
@@ -577,8 +493,11 @@ Anchors the marker on the bottom left
     public boolean onMarkerClick(final Marker mark) {
 
         //if (mark.equals(marker))
-        if(markers.contains(mark))
+        if(myMarks.containsKey(mark))
         {
+            final String gd = myMarks.get(mark);
+            database = FirebaseDatabase.getInstance();
+            mDatabase = database.getReference();
             if(mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN){
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             }
@@ -588,6 +507,29 @@ Anchors the marker on the bottom left
             //mLayout.findViewById(R.id.panel).setVisibility(View.VISIBLE);
             TextView t = (TextView) findViewById(R.id.name);
             t.setText(address);
+            final RatingBar ratingBar;
+            ratingBar = (RatingBar) findViewById(R.id.stars);
+            Luogo place = myPlaces.get(gd);
+            float voto;
+            float somma = place.getVoto();
+            int nvoti = place.getNvoti();
+            TextView testo = (TextView) findViewById(R.id.numero);
+
+
+            if (nvoti == 1) {
+                testo.setText("1 utente ha valutato questo luogo.");
+            } else if (nvoti > 1) {
+                testo.setText("" + nvoti + " utenti hanno valutato questo luogo.");
+            } else {
+                testo.setText("Nessuna valutazione presente.");
+            }
+
+            if (nvoti != 0) {
+                voto = somma / nvoti;
+                ratingBar.setRating(voto);
+            } else {
+                ratingBar.setRating(0);
+            }
 
             Button f = (Button) findViewById(R.id.condividi);
             //f.setMovementMethod(LinkMovementMethod.getInstance());
